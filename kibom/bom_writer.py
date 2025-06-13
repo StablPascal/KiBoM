@@ -5,7 +5,6 @@ from .xml_writer import WriteXML
 from .html_writer import WriteHTML
 from .xlsx_writer import WriteXLSX
 
-from . import columns
 from . import debug
 from .preferences import BomPref
 
@@ -22,7 +21,7 @@ def TmpFileCopy(filename, fmt):
         shutil.copyfile(filename, fmt.replace("%O", filename))
 
 
-def WriteBoM(filename, groups, net, headings=columns.ColumnList._COLUMNS_DEFAULT, prefs=None):
+def WriteBoM(filename, groups, net, prefs=None):
     """
     Write BoM to file
     filename = output file path
@@ -37,8 +36,8 @@ def WriteBoM(filename, groups, net, headings=columns.ColumnList._COLUMNS_DEFAULT
     if not prefs:
         prefs = BomPref()
 
-    # Remove any headings that appear in the ignore[] list
-    headings = [h for h in headings if not h.lower() in prefs.ignore]
+    # Include only headings that appear in the corder[] list
+    headings = [h for h in prefs.corder]
     # Allow renaming the columns
     head_names = [h if h.lower() not in prefs.colRename else prefs.colRename[h.lower()] for h in headings]
 

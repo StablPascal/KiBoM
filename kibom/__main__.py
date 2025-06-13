@@ -24,7 +24,6 @@ import os
 import argparse
 import locale
 
-from .columns import ColumnList
 from .netlist_reader import netlist
 from .bom_writer import WriteBoM
 from .preferences import BomPref
@@ -103,18 +102,6 @@ def writeVariant(input_file, output_dir, output_file, variant, preferences):
     # Group the components
     groups = net.groupComponents(components)
 
-    columns = ColumnList(preferences.corder)
-
-    # Read out all available fields
-    for g in groups:
-        for f in g.fields:
-            columns.AddColumn(f)
-
-    # Don't add 'boards' column if only one board is specified
-    if preferences.boards <= 1:
-        columns.RemoveColumn(ColumnList.COL_GRP_BUILD_QUANTITY)
-        debug.info("Removing:", ColumnList.COL_GRP_BUILD_QUANTITY)
-
     if output_file is None:
         output_file = input_file.replace(".xml", ".csv")
 
@@ -146,7 +133,7 @@ def writeVariant(input_file, output_dir, output_file, variant, preferences):
 
     debug.message("Saving BOM File:", output_file)
 
-    return WriteBoM(output_file, groups, net, columns.columns, preferences)
+    return WriteBoM(output_file, groups, net, preferences)
 
 
 def main():
