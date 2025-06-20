@@ -51,14 +51,8 @@ class BomPref:
     OPT_DATASHEET_AS_LINK = "datasheet_as_link"
 
     def __init__(self):
-        # List of headings to ignore in BoM generation
-        self.ignore = [
-            ColumnList.COL_PART_LIB.lower(),
-            ColumnList.COL_FP_LIB.lower(),
-            ColumnList.COL_SHEETPATH.lower(),
-        ]
 
-        self.corder = ColumnList._COLUMNS_DEFAULT
+        self.corder = ColumnList._COLUMNS_DEFAULT  # Sort columns and only include these columns
         self.useAlt = False  # Use alternate reference representation
         self.ignoreDNF = True  # Ignore rows for do-not-fit parts
         self.generateDNF = True  # Generate a list of do-not-fit parts
@@ -220,10 +214,6 @@ class BomPref:
         if self.SECTION_GROUPING_FIELDS in cf.sections():
             self.groups = [i for i in cf.options(self.SECTION_GROUPING_FIELDS)]
 
-        # Read out ignored-rows
-        if self.SECTION_IGNORE in cf.sections():
-            self.ignore = [i.lower() for i in cf.options(self.SECTION_IGNORE)]
-
         # Read out column order
         if self.SECTION_COLUMN_ORDER in cf.sections():
             self.corder = [i for i in cf.options(self.SECTION_COLUMN_ORDER)]
@@ -322,15 +312,8 @@ class BomPref:
         cf.set(self.SECTION_GENERAL, '; Interpret as a LCSC P/N and link the following field')
         cf.set(self.SECTION_GENERAL, self.OPT_LCSC_LINK, self.lcsc_link)
 
-        cf.add_section(self.SECTION_IGNORE)
-        cf.set(self.SECTION_IGNORE, "; Any column heading that appears here will be excluded from the Generated BoM")
-        cf.set(self.SECTION_IGNORE, "; Titles are case-insensitive")
-
-        for i in self.ignore:
-            cf.set(self.SECTION_IGNORE, i)
-
         cf.add_section(self.SECTION_COLUMN_ORDER)
-        cf.set(self.SECTION_COLUMN_ORDER, "; Columns will apear in the order they are listed here")
+        cf.set(self.SECTION_COLUMN_ORDER, "; Columns will appear in the order they are listed here AND ONLY THESE COLUMNS")
         cf.set(self.SECTION_COLUMN_ORDER, "; Titles are case-insensitive")
 
         for i in self.corder:
